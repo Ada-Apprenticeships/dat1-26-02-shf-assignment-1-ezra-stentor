@@ -1,5 +1,5 @@
 .open fittrackpro.db
-.mode box
+.mode column
 
 -- 3.1 
 

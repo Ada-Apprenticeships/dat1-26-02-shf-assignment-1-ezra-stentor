@@ -1,5 +1,5 @@
 .open fittrackpro.db
-.mode box
+.mode column
 
 -- 4.1 
 SELECT
@@ -31,15 +31,64 @@ GROUP BY
     end_time,
     capacity;
 
+-- 4.3
 
--- 4.3 
-
+INSERT INTO
+    class_attendance
+VALUES (
+    90,
+    (
+    SELECT
+        schedule_id 
+    FROM
+        class_schedule
+    WHERE
+        class_id == 1 AND DATE(start_time) == '2025-02-01'
+    ),
+    11,
+    'Registered'
+);
 
 -- 4.4 
 
+DELETE FROM
+    class_attendance
+WHERE
+    schedule_id == 7 AND member_id == 3;
 
 -- 4.5 
+
+SELECT
+    c.class_id,
+    c.name as class_name,
+    COUNT(attendance_status) as registration_count
+FROM 
+    class_schedule cs
+INNER JOIN class_attendance ca on ca.schedule_id = cs.schedule_id
+INNER JOIN classes c on c.class_id = cs.class_id
+WHERE
+    attendance_status == 'Registered'
+GROUP BY
+    c.class_id,
+    c.name,
+    attendance_status
+ORDER BY
+    registration_count DESC
+LIMIT 1;
 
 
 -- 4.6 
 
+SELECT
+    -- Rounding the average to the 1st DP for readability 
+    ROUND(AVG(attendance_count), 1) as average_classes
+FROM (
+    SELECT
+        COUNT(attendance_status) as attendance_count
+    FROM
+        class_attendance
+    WHERE
+        attendance_status IN ('Registered','Attended')
+    GROUP BY
+        member_id
+);
