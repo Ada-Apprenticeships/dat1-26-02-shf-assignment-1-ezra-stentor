@@ -27,7 +27,8 @@ CREATE TABLE members
     join_date TEXT DEFAULT(DATE('now')),
     emergency_contact_name VARCHAR(50),
     emergency_contact_phone VARCHAR(10),
-    CHECK (date_of_birth < DATE('now')),
+    CHECK (date_of_birth LIKE '____-__-__'),
+    CHECK (join_date LIKE '____-__-__'),
     CHECK (email LIKE '%@%.%')
 );
 
@@ -42,7 +43,7 @@ CREATE TABLE staff (
     position TEXT,
     hire_date TEXT,
     location_id INTEGER(10) NOT NULL,
-
+    CHECK (hire_date LIKE '____-__-__'),
     CHECK (position in ('Trainer', 'Manager', 'Receptionist', 'Maintenance')),
     CHECK (email LIKE '%@%.%'),
 
@@ -56,11 +57,14 @@ CREATE TABLE equipment(
 equipment_id INTEGER PRIMARY KEY AUTOINCREMENT,
 name VARCHAR(30) NOT NULL,
 type TEXT NOT NULL,
-purchase_date TEXT, --yyyy-mm-dd
-last_maintenance_date TEXT,	--yyyy-mm-dd
-next_maintenance_date TEXT,	--yyyy-mm-dd
+purchase_date TEXT, 
+last_maintenance_date TEXT,	
+next_maintenance_date TEXT,	
 location_id INTEGER(10) NOT NULL,
 
+CHECK (purchase_date LIKE '____-__-__')
+CHECK (last_maintenance_date LIKE '____-__-__')
+CHECK (next_maintenance_date LIKE '____-__-__')
 CHECK (type in ('Cardio', 'Strength')),
 FOREIGN KEY (location_id) REFERENCES locations(location_id)
 
@@ -102,9 +106,12 @@ CREATE TABLE memberships(
 membership_id INTEGER PRIMARY KEY AUTOINCREMENT,
 member_id INTEGER(10) NOT NULL,	
 type VARCHAR(50) NOT NULL,
-start_date TEXT, --	"yyyy-mm-dd"
-end_date TEXT,--"yyyy-mm-dd"
+start_date TEXT, 
+end_date TEXT,
 status TEXT DEFAULT 'Active',
+
+CHECK (start_date LIKE '____-__-__')
+CHECK (end_date LIKE '____-__-__')
 
 CHECK (status in ('Active', 'Inactive')),
 CHECK (end_date > start_date),
@@ -117,10 +124,11 @@ CREATE TABLE attendance(
 attendance_id INTEGER PRIMARY KEY AUTOINCREMENT,
 member_id INTEGER(10) NOT NULL,
 location_id INTEGER(10) NOT NULL,
-check_in_time TEXT DEFAULT (DATETIME('now')), --	yyyy-mm-dd hh:mm:ss
-check_out_time TEXT,--	yyyy-mm-dd hh:mm:ss
+check_in_time TEXT DEFAULT (DATETIME('now')), 
+check_out_time TEXT,
 CHECK (check_out_time IS NULL OR check_out_time > check_in_time),
-
+CHECK (check_in_time LIKE '____-__-__ __:__:__'),
+CHECK (check_out_time LIKE '____-__-__ __:__:__')
 FOREIGN KEY (member_id) REFERENCES members(member_id),
 FOREIGN KEY (location_id) REFERENCES locations(location_id)
 );
@@ -144,10 +152,11 @@ CREATE TABLE payments(
 payment_id INTEGER PRIMARY KEY AUTOINCREMENT,
 member_id INTEGER(10) NOT NULL,
 amount DECIMAL(10,2), 
-payment_date TEXT DEFAULT (DATETIME('now')),	--yyyy-mm-dd hh:mm:ss
+payment_date TEXT DEFAULT (DATETIME('now')),
 payment_method TEXT,
 payment_type TEXT,
 CHECK (amount > 0),
+CHECK (payment_date LIKE '____-__-__ __:__:__'),
 CHECK (payment_method in ('Credit Card', 'Bank Transfer', 'PayPal', 'Cash'))
 CHECK (payment_type in ('Monthly membership fee', 'Day pass'))
 FOREIGN KEY (member_id) REFERENCES members(member_id)
@@ -160,11 +169,13 @@ CREATE TABLE personal_training_sessions(
 session_id INTEGER PRIMARY KEY AUTOINCREMENT,
 member_id INTEGER(10) NOT NULL,
 staff_id INTEGER(10) NOT NULL,
-session_date TEXT, --yyyy-mm-dd
-start_time TEXT, --	hh:mm:ss
-end_time TEXT, 	--hh:mm:ss
+session_date TEXT,
+start_time TEXT,
+end_time TEXT, 
 notes VARCHAR(100),
-
+CHECK (session_date LIKE '____-__-__'),
+CHECK (start_time LIKE '__:__:__'),
+CHECK (end_time LIKE '__:__:__'),
 FOREIGN KEY (member_id) REFERENCES members(member_id)
 FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
 );
@@ -173,12 +184,12 @@ FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
 CREATE TABLE member_health_metrics(
 metric_id INTEGER PRIMARY KEY AUTOINCREMENT,
 member_id INTEGER(10) NOT NULL,
-measurement_date TEXT, --yyyy-mm-dd
+measurement_date TEXT, 
 weight REAL,
 body_fat_percentage REAL,
 muscle_mass REAL,
 bmi REAL,
-
+CHECK (measurement_date LIKE '____-__-__'),
 FOREIGN KEY (member_id) REFERENCES members(member_id)
 );
 
@@ -186,10 +197,10 @@ FOREIGN KEY (member_id) REFERENCES members(member_id)
 CREATE TABLE equipment_maintenance_log(
 log_id INTEGER PRIMARY KEY AUTOINCREMENT,
 equipment_id INTEGER(10) NOT NULL,
-maintenance_date TEXT,	--yyyy-mm-dd
+maintenance_date TEXT,
 description VARCHAR(100),
 staff_id INTEGER(10) NOT NULL,
-
+CHECK (maintenance_date LIKE '____-__-__'),
 FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
 FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
 );

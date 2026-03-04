@@ -2,13 +2,11 @@
 .mode column
 
 -- 6.1 
-
 INSERT INTO
     attendance
 VALUES(NULL, 7, 1, '2025-02-14 16:30:00', null);
 
 -- 6.2 
-
 SELECT
     DATE(check_in_time) as visit_date,
     check_in_time,
@@ -19,7 +17,6 @@ WHERE
     member_id == 5;
 
 -- 6.3 
-
 SELECT
     -- mapping number to name for readablility 
     CASE CAST(week_num as integer)

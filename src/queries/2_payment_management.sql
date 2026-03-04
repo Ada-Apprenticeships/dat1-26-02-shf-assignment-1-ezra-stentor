@@ -23,7 +23,6 @@ GROUP BY
     strftime('%m',payment_date);
 
 -- 2.3 
-
 SELECT 
     payment_id, 
     amount, 

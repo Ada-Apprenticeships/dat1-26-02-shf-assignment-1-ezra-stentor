@@ -11,7 +11,6 @@ INNER JOIN classes c on c.class_id = cs.class_id
 INNER JOIN staff s on s.staff_id = cs.staff_id;
 
 -- 4.2
-
 SELECT
     cs.class_id,
     name,
@@ -32,7 +31,6 @@ GROUP BY
     capacity;
 
 -- 4.3
-
 INSERT INTO
     class_attendance
 VALUES (
@@ -50,14 +48,12 @@ VALUES (
 );
 
 -- 4.4 
-
 DELETE FROM
     class_attendance
 WHERE
     schedule_id == 7 AND member_id == 3;
 
 -- 4.5 
-
 SELECT
     c.class_id,
     c.name as class_name,
@@ -78,7 +74,6 @@ LIMIT 1;
 
 
 -- 4.6 
-
 SELECT
     -- Rounding the average to the 1st DP for readability 
     ROUND(AVG(attendance_count), 1) as average_classes

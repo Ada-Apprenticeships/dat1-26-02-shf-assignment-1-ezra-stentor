@@ -2,7 +2,6 @@
 .mode column
 
 -- 7.1 
-
 SELECT 
     staff_id,
     first_name,
@@ -14,7 +13,6 @@ ORDER BY position;
 
 
 -- 7.2 
-
 SELECT 
     pts.staff_id as trainer_id,
     first_name || ' ' || last_name as trainer_name,
@@ -23,8 +21,7 @@ FROM
     personal_training_sessions as pts
 INNER JOIN staff s on s.staff_id = pts.staff_id
 WHERE
-    WHERE s.position = 'Trainer' AND
+    s.position = 'Trainer' AND
     julianday(session_date) - julianday('2025-01-20') BETWEEN 0 AND 30
 GROUP BY
     trainer_id;
-
