@@ -14,7 +14,7 @@ SELECT
 FROM
     attendance
 WHERE
-    member_id == 5;
+    member_id = 5;
 
 -- 6.3 
 SELECT

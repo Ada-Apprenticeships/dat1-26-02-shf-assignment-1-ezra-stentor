@@ -11,7 +11,7 @@ SELECT
 FROM
     memberships ms
 INNER JOIN members m on m.member_id = ms.member_id
-WHERE status == 'Active';
+WHERE status = 'Active';
 
 -- 5.2 
 SELECT 

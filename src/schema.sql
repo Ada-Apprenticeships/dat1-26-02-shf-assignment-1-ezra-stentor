@@ -62,9 +62,9 @@ last_maintenance_date TEXT,
 next_maintenance_date TEXT,	
 location_id INTEGER(10) NOT NULL,
 
-CHECK (purchase_date LIKE '____-__-__')
-CHECK (last_maintenance_date LIKE '____-__-__')
-CHECK (next_maintenance_date LIKE '____-__-__')
+CHECK (purchase_date LIKE '____-__-__'),
+CHECK (last_maintenance_date LIKE '____-__-__'),
+CHECK (next_maintenance_date LIKE '____-__-__'),
 CHECK (type in ('Cardio', 'Strength')),
 FOREIGN KEY (location_id) REFERENCES locations(location_id)
 
@@ -91,10 +91,10 @@ CREATE TABLE class_schedule(
 schedule_id INTEGER PRIMARY KEY AUTOINCREMENT,
 class_id INTEGER(10) NOT NULL,
 staff_id INTEGER(10) NOT NULL,
-start_time TEXT,--	"yyyy-mm-dd hh:mm:ss"
-end_time TEXT,	--"yyyy-mm-dd hh:mm:ss"
-
-
+start_time TEXT,
+end_time TEXT,
+CHECK (start_time LIKE '____-__-__ __:__:__'),
+CHECK (end_time LIKE '____-__-__ __:__:__'),
 FOREIGN KEY (class_id) REFERENCES classes(class_id),
 FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
 
@@ -110,8 +110,8 @@ start_date TEXT,
 end_date TEXT,
 status TEXT DEFAULT 'Active',
 
-CHECK (start_date LIKE '____-__-__')
-CHECK (end_date LIKE '____-__-__')
+CHECK (start_date LIKE '____-__-__'),
+CHECK (end_date LIKE '____-__-__'),
 
 CHECK (status in ('Active', 'Inactive')),
 CHECK (end_date > start_date),
@@ -128,7 +128,7 @@ check_in_time TEXT DEFAULT (DATETIME('now')),
 check_out_time TEXT,
 CHECK (check_out_time IS NULL OR check_out_time > check_in_time),
 CHECK (check_in_time LIKE '____-__-__ __:__:__'),
-CHECK (check_out_time LIKE '____-__-__ __:__:__')
+CHECK (check_out_time IS NULL OR check_out_time LIKE '____-__-__ __:__:__'),
 FOREIGN KEY (member_id) REFERENCES members(member_id),
 FOREIGN KEY (location_id) REFERENCES locations(location_id)
 );
@@ -140,7 +140,6 @@ class_attendance_id INTEGER PRIMARY KEY AUTOINCREMENT,
 schedule_id INTEGER(10) NOT NULL,
 member_id INTEGER(10) NOT NULL,
 attendance_status TEXT,
-
 CHECK (attendance_status in ('Registered', 'Attended', 'Unattended')),
 FOREIGN KEY (schedule_id) REFERENCES class_schedule(schedule_id),
 FOREIGN KEY (member_id) REFERENCES members(member_id)
@@ -157,8 +156,8 @@ payment_method TEXT,
 payment_type TEXT,
 CHECK (amount > 0),
 CHECK (payment_date LIKE '____-__-__ __:__:__'),
-CHECK (payment_method in ('Credit Card', 'Bank Transfer', 'PayPal', 'Cash'))
-CHECK (payment_type in ('Monthly membership fee', 'Day pass'))
+CHECK (payment_method in ('Credit Card', 'Bank Transfer', 'PayPal', 'Cash')),
+CHECK (payment_type in ('Monthly membership fee', 'Day pass')),
 FOREIGN KEY (member_id) REFERENCES members(member_id)
 
 );
@@ -176,7 +175,7 @@ notes VARCHAR(100),
 CHECK (session_date LIKE '____-__-__'),
 CHECK (start_time LIKE '__:__:__'),
 CHECK (end_time LIKE '__:__:__'),
-FOREIGN KEY (member_id) REFERENCES members(member_id)
+FOREIGN KEY (member_id) REFERENCES members(member_id),
 FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
 );
 

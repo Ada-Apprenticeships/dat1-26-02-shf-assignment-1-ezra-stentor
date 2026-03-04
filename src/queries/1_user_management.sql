@@ -50,7 +50,7 @@ FROM
     SELECT
         count(member_id) as count
     FROM class_attendance
-    WHERE attendance_status == 'Attended'
+    WHERE attendance_status = 'Attended'
     GROUP BY member_id
 )
 WHERE count >= 2;

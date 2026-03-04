@@ -22,7 +22,7 @@ FROM
     class_schedule cs
 INNER JOIN classes c on c.class_id = cs.class_id
 LEFT JOIN class_attendance as ca on ca.schedule_id = cs.schedule_id
-WHERE date(start_time) == '2025-02-01'
+WHERE date(start_time) = '2025-02-01'
 GROUP BY 
     cs.class_id, 
     name,
@@ -41,7 +41,7 @@ VALUES (
     FROM
         class_schedule
     WHERE
-        class_id == 1 AND DATE(start_time) == '2025-02-01'
+        class_id = 1 AND DATE(start_time) = '2025-02-01'
     ),
     11,
     'Registered'
@@ -51,7 +51,7 @@ VALUES (
 DELETE FROM
     class_attendance
 WHERE
-    schedule_id == 7 AND member_id == 3;
+    schedule_id = 7 AND member_id = 3;
 
 -- 4.5 
 SELECT
@@ -63,7 +63,7 @@ FROM
 INNER JOIN class_attendance ca on ca.schedule_id = cs.schedule_id
 INNER JOIN classes c on c.class_id = cs.class_id
 WHERE
-    attendance_status == 'Registered'
+    attendance_status = 'Registered'
 GROUP BY
     c.class_id,
     c.name,
