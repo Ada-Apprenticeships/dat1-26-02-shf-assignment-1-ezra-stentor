@@ -20,31 +20,31 @@ WHERE member_id = 5;
 
 -- 1.3
 
-SELECT count(member_id) as count FROM members;
+SELECT count(member_id) as member_count FROM members;
 
 -- 1.4
 
 SELECT
-    class_attendance.member_id,
+    ca.member_id,
     first_name,
     last_name,
-    count(class_attendance.member_id) as registration_count
-FROM class_attendance
-INNER JOIN members ON class_attendance.member_id = members.member_id
+    count(ca.member_id) as registration_count
+FROM class_attendance ca
+INNER JOIN members ON ca.member_id = members.member_id
 GROUP BY members.member_id
-ORDER BY count(class_attendance.member_id) desc LIMIT 1;
+ORDER BY count(ca.member_id) desc LIMIT 1;
 
 -- 1.5
 
 SELECT
-    class_attendance.member_id,
+    ca.member_id,
     first_name,
     last_name,
-    count(class_attendance.member_id) as registration_count
-FROM class_attendance
-INNER JOIN members ON class_attendance.member_id = members.member_id
+    count(ca.member_id) as registration_count
+FROM class_attendance ca
+LEFT JOIN members ON ca.member_id = members.member_id
 GROUP BY members.member_id
-ORDER BY count(class_attendance.member_id) LIMIT 1;
+ORDER BY count(ca.member_id) LIMIT 1;
 
 -- 1.6
 

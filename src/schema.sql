@@ -6,42 +6,45 @@ PRAGMA foreign_keys = ON;
 --set up locations table
 CREATE TABLE locations
 (
-    location_id INTEGER(10) PRIMARY KEY NOT NULL,
+    location_id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(50) NOT NULL,
     address VARCHAR(100) NOT NULL,
-    phone_number VARCHAR(10) NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
     email VARCHAR(50) NOT NULL UNIQUE,
-    opening_hours VARCHAR(50)
+    opening_hours VARCHAR(50),
+    CHECK (email LIKE '%@%.%')
 );
 
 --members table
 CREATE TABLE members
 (
-    member_id INTEGER(10) PRIMARY KEY NOT NULL,
+    member_id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
     email VARCHAR(50) NOT NULL UNIQUE,
-    phone_number VARCHAR(10) NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
     date_of_birth TEXT,
     join_date TEXT DEFAULT(DATE('now')),
     emergency_contact_name VARCHAR(50),
-    emergency_contact_phone VARCHAR(10)
-    --CHECK (date_of_birth < DATE('now'))
+    emergency_contact_phone VARCHAR(10),
+    CHECK (date_of_birth < DATE('now')),
+    CHECK (email LIKE '%@%.%')
 );
 
 
 --staff table
 CREATE TABLE staff (
-    staff_id INTEGER(10) PRIMARY KEY NOT NULL,
+    staff_id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
     email VARCHAR(50) NOT NULL UNIQUE,
-    phone_number VARCHAR(10) NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
     position TEXT,
     hire_date TEXT,
-    location_id INTEGER(10),
+    location_id INTEGER(10) NOT NULL,
 
     CHECK (position in ('Trainer', 'Manager', 'Receptionist', 'Maintenance')),
+    CHECK (email LIKE '%@%.%'),
 
     FOREIGN KEY (location_id) REFERENCES locations(location_id)
 
@@ -50,36 +53,38 @@ CREATE TABLE staff (
 
 --equipment table
 CREATE TABLE equipment(
-equipment_id INTEGER(10) PRIMARY KEY NOT NULL,
+equipment_id INTEGER PRIMARY KEY AUTOINCREMENT,
 name VARCHAR(30) NOT NULL,
 type TEXT NOT NULL,
 purchase_date TEXT, --yyyy-mm-dd
 last_maintenance_date TEXT,	--yyyy-mm-dd
 next_maintenance_date TEXT,	--yyyy-mm-dd
-location_id INTEGER(10),
+location_id INTEGER(10) NOT NULL,
 
 CHECK (type in ('Cardio', 'Strength')),
-FOREIGN KEY (location_id) REFERENCES locations(locations_id)
+FOREIGN KEY (location_id) REFERENCES locations(location_id)
 
 );
 
 
 --classes table
 CREATE TABLE classes(
-class_id INTEGER(10) PRIMARY KEY NOT NULL,
+class_id INTEGER PRIMARY KEY AUTOINCREMENT,
 name VARCHAR(30) NOT NULL,
 description VARCHAR(100) NOT NULL,
-capacity INTEGER, --30
-duration FLOAT(20) ,--20
-location_id INTEGER(10), --FK
-FOREIGN KEY (location_id) REFERENCES locations(locations_id)
+capacity INTEGER,
+duration INTEGER,
+location_id INTEGER(10) NOT NULL,
 
+CHECK (capacity > 0),
+CHECK (duration > 0),
+FOREIGN KEY (location_id) REFERENCES locations(location_id)
 );
 
 
 --class_schedule table
 CREATE TABLE class_schedule(
-schedule_id INTEGER(10) PRIMARY KEY NOT NULL,
+schedule_id INTEGER PRIMARY KEY AUTOINCREMENT,
 class_id INTEGER(10) NOT NULL,
 staff_id INTEGER(10) NOT NULL,
 start_time TEXT,--	"yyyy-mm-dd hh:mm:ss"
@@ -94,37 +99,38 @@ FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
 
 --memberships table
 CREATE TABLE memberships(
-membership_id INTEGER(10) PRIMARY KEY NOT NULL,
-member_id INTEGER(10) NOT NULL,	--FK
+membership_id INTEGER PRIMARY KEY AUTOINCREMENT,
+member_id INTEGER(10) NOT NULL,	
 type VARCHAR(50) NOT NULL,
 start_date TEXT, --	"yyyy-mm-dd"
 end_date TEXT,--"yyyy-mm-dd"
-status TEXT,
+status TEXT DEFAULT 'Active',
 
 CHECK (status in ('Active', 'Inactive')),
+CHECK (end_date > start_date),
 
 FOREIGN KEY (member_id) REFERENCES members(member_id)
 );
 
 --attendance table
 CREATE TABLE attendance(
-attendance_id INTEGER(10) PRIMARY KEY NOT NULL,
+attendance_id INTEGER PRIMARY KEY AUTOINCREMENT,
 member_id INTEGER(10) NOT NULL,
 location_id INTEGER(10) NOT NULL,
-check_in_time TEXT, --	yyyy-mm-dd hh:mm:ss
+check_in_time TEXT DEFAULT (DATETIME('now')), --	yyyy-mm-dd hh:mm:ss
 check_out_time TEXT,--	yyyy-mm-dd hh:mm:ss
-
+CHECK (check_out_time IS NULL OR check_out_time > check_in_time),
 
 FOREIGN KEY (member_id) REFERENCES members(member_id),
-FOREIGN KEY (location_id) REFERENCES locations(locations_id)
+FOREIGN KEY (location_id) REFERENCES locations(location_id)
 );
 
 
 --class_attendance table
 CREATE TABLE class_attendance(
-class_attendance_id INTEGER(10) PRIMARY KEY NOT NULL,
-schedule_id INTEGER(10),
-member_id INTEGER(10),
+class_attendance_id INTEGER PRIMARY KEY AUTOINCREMENT,
+schedule_id INTEGER(10) NOT NULL,
+member_id INTEGER(10) NOT NULL,
 attendance_status TEXT,
 
 CHECK (attendance_status in ('Registered', 'Attended', 'Unattended')),
@@ -135,13 +141,13 @@ FOREIGN KEY (member_id) REFERENCES members(member_id)
 
 -- payments table
 CREATE TABLE payments(
-payment_id INTEGER(10) PRIMARY KEY NOT NULL,
-member_id INTEGER(10),
-amount FLOAT(1000), 
-payment_date TEXT,	--yyyy-mm-dd hh:mm:ss
+payment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+member_id INTEGER(10) NOT NULL,
+amount DECIMAL(10,2), 
+payment_date TEXT DEFAULT (DATETIME('now')),	--yyyy-mm-dd hh:mm:ss
 payment_method TEXT,
 payment_type TEXT,
-
+CHECK (amount > 0),
 CHECK (payment_method in ('Credit Card', 'Bank Transfer', 'PayPal', 'Cash'))
 CHECK (payment_type in ('Monthly membership fee', 'Day pass'))
 FOREIGN KEY (member_id) REFERENCES members(member_id)
@@ -151,9 +157,9 @@ FOREIGN KEY (member_id) REFERENCES members(member_id)
 
 --personal_training_sessions table
 CREATE TABLE personal_training_sessions(
-session_id INTEGER(10) PRIMARY KEY NOT NULL,
-member_id INTEGER(10),
-staff_id INTEGER(10),
+session_id INTEGER PRIMARY KEY AUTOINCREMENT,
+member_id INTEGER(10) NOT NULL,
+staff_id INTEGER(10) NOT NULL,
 session_date TEXT, --yyyy-mm-dd
 start_time TEXT, --	hh:mm:ss
 end_time TEXT, 	--hh:mm:ss
@@ -165,24 +171,24 @@ FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
 
 -- member_health_metrics table
 CREATE TABLE member_health_metrics(
-metric_id INTEGER(10) PRIMARY KEY NOT NULL,
-member_id INTEGER(10),
-measurement_date TEXT, --	yyyy-mm-dd
-weight FLOAT(1000), 	--64.5
-body_fat_percentage FLOAT(1000), 	--20.0
-muscle_mass FLOAT(1000), 	--50.0
-bmi FLOAT(1000),--23.5
+metric_id INTEGER PRIMARY KEY AUTOINCREMENT,
+member_id INTEGER(10) NOT NULL,
+measurement_date TEXT, --yyyy-mm-dd
+weight REAL,
+body_fat_percentage REAL,
+muscle_mass REAL,
+bmi REAL,
 
 FOREIGN KEY (member_id) REFERENCES members(member_id)
 );
 
 --equipment_maintenance_log table
 CREATE TABLE equipment_maintenance_log(
-log_id INTEGER(10) PRIMARY KEY NOT NULL,
-equipment_id INTEGER(10),
+log_id INTEGER PRIMARY KEY AUTOINCREMENT,
+equipment_id INTEGER(10) NOT NULL,
 maintenance_date TEXT,	--yyyy-mm-dd
 description VARCHAR(100),
-staff_id INTEGER(10),
+staff_id INTEGER(10) NOT NULL,
 
 FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id),
 FOREIGN KEY (staff_id) REFERENCES staff(staff_id)

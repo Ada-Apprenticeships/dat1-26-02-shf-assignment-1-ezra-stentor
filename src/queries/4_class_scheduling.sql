@@ -5,7 +5,7 @@
 SELECT
     c.class_id,
     name as class_name,
-    s.first_name as instructor_name
+    s.first_name || ' ' || s.last_name as instructor_name
 FROM class_schedule cs
 INNER JOIN classes c on c.class_id = cs.class_id
 INNER JOIN staff s on s.staff_id = cs.staff_id;
@@ -36,7 +36,7 @@ GROUP BY
 INSERT INTO
     class_attendance
 VALUES (
-    90,
+    NULL,
     (
     SELECT
         schedule_id 
@@ -88,7 +88,7 @@ FROM (
     FROM
         class_attendance
     WHERE
-        attendance_status IN ('Registered','Attended')
+        attendance_status IN ('Registered', 'Attended')
     GROUP BY
         member_id
 );

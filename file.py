@@ -1,5 +1,5 @@
 import os
-
+# script to format the csvs into the insertion.sql file
 def format_sql(file):
     table_name = f"{file.replace("data/","").replace(".csv","")}"
     with open(file, "r") as f:
